@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Election Results - E-Voting System</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+<div class="dashboard">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+
+            <div class="vote-logo">
+                🗳️
+            </div>
+
+            <h2>E-Voting</h2>
+
+            <p>
+                Secure Digital Election
+            </p>
+
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <a href="voter-dashboard.html"
+               class="menu-item">
+
+                🏠
+                <span>Dashboard</span>
+
+            </a>
+
+
+            <a href="candidates.html"
+               class="menu-item">
+
+                🗳️
+                <span>Vote Now</span>
+
+            </a>
+
+
+            <a href="voter-dashboard.html"
+               class="menu-item">
+
+                👤
+                <span>My Profile</span>
+
+            </a>
+
+
+            <a href="results.html"
+               class="menu-item active">
+
+                📊
+                <span>Results</span>
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="vote-message">
+
+                <div class="vote-message-icon">
+                    🗳️
+                </div>
+
+                <h3>Your Vote</h3>
+
+                <p>Matters</p>
+
+            </div>
+
+
+            <button
+                    class="sidebar-logout"
+                    onclick="logout()">
+
+                🚪 Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+
+        <!-- HEADER -->
+
+        <header class="top-header">
+
+            <div class="header-title">
+
+                <div class="header-vote-icon">
+                    📊
+                </div>
+
+                <div>
+
+                    <h1>
+                        Election Results
+                    </h1>
+
+                    <p>
+                        Current voting results
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="user-section">
+
+                <div class="user-icon">
+                    👤
+                </div>
+
+                <div>
+
+                    <strong id="headerUserName">
+                        Welcome!
+                    </strong>
+
+                    <small>
+                        Voter
+                    </small>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- CONTENT -->
+
+        <section class="dashboard-content">
+
+
+            <!-- TITLE -->
+
+            <div class="results-heading">
+
+                <div>
+
+                    <h2>
+                        🏆 Election Results
+                    </h2>
+
+                    <p>
+                        Vote counts for all candidates
+                    </p>
+
+                </div>
+
+
+                <button
+                        class="refresh-button"
+                        onclick="loadResults()">
+
+                    🔄 Refresh Results
+
+                </button>
+
+            </div>
+
+
+
+            <!-- SUMMARY -->
+
+            <div class="result-summary">
+
+                <div class="summary-card">
+
+                    <div class="summary-icon">
+                        🗳️
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Votes
+                        </span>
+
+                        <strong id="totalVotes">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <div class="summary-icon">
+                        👥
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Candidates
+                        </span>
+
+                        <strong id="totalCandidates">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RESULTS -->
+
+            <div class="results-container">
+
+                <div class="results-title">
+
+                    <h2>
+                        Candidate Results
+                    </h2>
+
+                    <span id="resultStatus">
+                        Loading...
+                    </span>
+
+                </div>
+
+
+                <div
+                        id="resultsList"
+                        class="results-list">
+
+                    <div class="loading-results">
+
+                        <div class="loading-spinner"></div>
+
+                        <p>
+                            Loading election results...
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+    </main>
+
+</div>
+
+
+
+<script>
+
+
+    /* ================================
+       CHECK LOGIN
+    ================================ */
+
+    const userData =
+        localStorage.getItem("user");
+
+
+    if (!userData) {
+
+        window.location.href =
+            "index.html";
+
+    }
+
+
+    const user =
+        JSON.parse(userData);
+
+
+    document.getElementById(
+        "headerUserName"
+    ).innerText =
+        "Welcome, " + user.name + "!";
+
+
+
+    /* ================================
+       LOAD RESULTS
+    ================================ */
+
+    async function loadResults() {
+
+        const resultsList =
+            document.getElementById(
+                "resultsList"
+            );
+
+
+        const resultStatus =
+            document.getElementById(
+                "resultStatus"
+            );
+
+
+        resultStatus.innerText =
+            "Loading...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/results"
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load results"
+                );
+
+            }
+
+
+            const results =
+                await response.json();
+
+
+            resultsList.innerHTML = "";
+
+
+            /* No candidates */
+
+            if (results.length === 0) {
+
+                resultsList.innerHTML = `
+
+                    <div class="no-results">
+
+                        <div>
+                            🗳️
+                        </div>
+
+                        <h3>
+                            No Results Available
+                        </h3>
+
+                        <p>
+                            Election results will
+                            appear here.
+                        </p>
+
+                    </div>
+
+                `;
+
+                resultStatus.innerText =
+                    "No data";
+
+                return;
+
+            }
+
+
+            /* Calculate total votes */
+
+            let totalVotes = 0;
+
+
+            results.forEach(
+                result => {
+
+                    totalVotes +=
+                        result.votes;
+
+                }
+            );
+
+
+            document.getElementById(
+                "totalVotes"
+            ).innerText =
+                totalVotes;
+
+
+            document.getElementById(
+                "totalCandidates"
+            ).innerText =
+                results.length;
+
+
+            resultStatus.innerText =
+                "Updated";
+
+
+            /* Create result cards */
+
+            results.forEach(
+                (result, index) => {
+
+
+                    let percentage = 0;
+
+
+                    if (totalVotes > 0) {
+
+                        percentage =
+                            (
+                                result.votes /
+                                totalVotes
+                            ) * 100;
+
+                    }
+
+
+                    const card =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    card.className =
+                        "result-card";
+
+
+                    card.innerHTML = `
+
+                        <div class="candidate-rank">
+
+                            ${index + 1}
+
+                        </div>
+
+
+                        <div class="candidate-info">
+
+                            <div class="candidate-avatar">
+
+                                👤
+
+                            </div>
+
+
+                            <div>
+
+                                <h3>
+                                    ${result.candidateName}
+                                </h3>
+
+                                <p>
+                                    ${result.party}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="vote-information">
+
+                            <strong>
+                                ${result.votes}
+                            </strong>
+
+                            <span>
+                                votes
+                            </span>
+
+                        </div>
+
+
+                        <div class="vote-progress">
+
+                            <div
+                                class="progress-bar">
+
+                                <div
+                                    class="progress-fill"
+                                    style="width:${percentage}%">
+                                </div>
+
+                            </div>
+
+                            <span>
+                                ${percentage.toFixed(1)}%
+                            </span>
+
+                        </div>
+
+                    `;
+
+
+                    resultsList.appendChild(
+                        card
+                    );
+
+                }
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            resultsList.innerHTML = `
+
+                <div class="no-results">
+
+                    <div>
+                        ⚠️
+                    </div>
+
+                    <h3>
+                        Unable to Load Results
+                    </h3>
+
+                    <p>
+                        Please make sure the
+                        Spring Boot server is running.
+                    </p>
+
+                </div>
+
+            `;
+
+
+            resultStatus.innerText =
+                "Error";
+
+        }
+
+    }
+
+
+
+    /* ================================
+       LOGOUT
+    ================================ */
+
+    function logout() {
+
+        localStorage.removeItem(
+            "user"
+        );
+
+        window.location.href =
+            "index.html";
+
+    }
+
+
+
+    /* ================================
+       LOAD RESULTS
+    ================================ */
+
+    loadResults();
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Voter Dashboard - E-Voting System</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <div class="vote-logo">🗳️</div>
+
+            <h2>E-Voting</h2>
+            <p>Secure Digital Election</p>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="voter-dashboard.html" class="menu-item active">
+                🏠
+                <span>Dashboard</span>
+            </a>
+
+            <a href="candidates.html" class="menu-item">
+                🗳️
+                <span>Vote Now</span>
+            </a>
+
+            <a href="voter-dashboard.html" class="menu-item"
+               onclick="showProfile(); return false;">
+                👤
+                <span>My Profile</span>
+            </a>
+
+            <a href="results.html" class="menu-item">
+                📊
+                <span>Results</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="vote-message">
+                <div class="vote-message-icon">🗳️</div>
+
+                <h3>Your Vote</h3>
+                <p>Matters</p>
+            </div>
+
+            <button class="sidebar-logout" onclick="logout()">
+                🚪 Logout
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOP HEADER -->
+        <header class="top-header">
+
+            <div class="header-title">
+
+                <div class="header-vote-icon">
+                    🗳️
+                </div>
+
+                <div>
+                    <h1>E-Voting System</h1>
+                    <p>Your Vote • Your Voice • A Better Tomorrow</p>
+                </div>
+
+            </div>
+
+
+            <div class="user-section">
+
+                <div class="user-icon">
+                    👤
+                </div>
+
+                <div>
+                    <strong id="headerUserName">
+                        Welcome!
+                    </strong>
+
+                    <small>Voter</small>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+        <section class="dashboard-content">
+
+
+            <!-- WELCOME BANNER -->
+            <div class="welcome-banner">
+
+                <div class="welcome-text">
+
+                    <h2 id="welcomeMessage">
+                        Welcome, Damini!
+                    </h2>
+
+                    <h3>
+                        Ready to make your voice count?
+                    </h3>
+
+                    <p>
+                        This is your secure voting dashboard.
+                        You can view candidates, cast your vote
+                        and check election results.
+                    </p>
+
+                    <button
+                            class="primary-button"
+                            onclick="window.location.href='candidates.html'">
+
+                        🗳️ Vote Now →
+                    </button>
+
+                </div>
+
+
+                <div class="welcome-vote-icon">
+
+                    <div class="big-ballot">
+                        🗳️
+                    </div>
+
+                    <div class="check-mark">
+                        ✓
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DASHBOARD CARDS -->
+            <div class="dashboard-cards">
+
+
+                <!-- VOTE CARD -->
+                <div class="dashboard-card vote-card">
+
+                    <div class="card-icon">
+                        🗳️
+                    </div>
+
+                    <h3>
+                        Cast Your Vote
+                    </h3>
+
+                    <p>
+                        View the available candidates
+                        and cast your vote.
+                    </p>
+
+                    <button
+                            onclick="window.location.href='candidates.html'">
+
+                        Vote Now →
+
+                    </button>
+
+                </div>
+
+
+                <!-- PROFILE CARD -->
+                <div class="dashboard-card profile-card">
+
+                    <div class="card-icon">
+                        👤
+                    </div>
+
+                    <h3>
+                        My Profile
+                    </h3>
+
+                    <p>
+                        View your registered
+                        account information.
+                    </p>
+
+                    <button onclick="showProfile()">
+
+                        View Profile →
+
+                    </button>
+
+                </div>
+
+
+                <!-- RESULTS CARD -->
+                <div class="dashboard-card results-card">
+
+                    <div class="card-icon">
+                        📊
+                    </div>
+
+                    <h3>
+                        Election Results
+                    </h3>
+
+                    <p>
+                        View the current
+                        election results.
+                    </p>
+
+                    <button
+                            onclick="window.location.href='results.html'">
+
+                        View Results →
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROFILE SECTION -->
+            <div
+                    id="profileBox"
+                    class="profile-section"
+                    style="display:none;">
+
+                <div class="profile-header">
+
+                    <div class="profile-large-icon">
+                        👤
+                    </div>
+
+                    <div>
+                        <h2>My Profile</h2>
+                        <p>Your registered account information</p>
+                    </div>
+
+                </div>
+
+
+                <div class="profile-details">
+
+                    <div class="profile-detail">
+                        <span>Name</span>
+                        <strong id="profileName"></strong>
+                    </div>
+
+                    <div class="profile-detail">
+                        <span>Email</span>
+                        <strong id="profileEmail"></strong>
+                    </div>
+
+                    <div class="profile-detail">
+                        <span>Role</span>
+                        <strong id="profileRole"></strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RECENT ACTIVITY -->
+            <div class="activity-section">
+
+                <div class="activity-title">
+
+                    <span class="activity-icon">
+                        🕘
+                    </span>
+
+                    <div>
+                        <h2>Recent Activity</h2>
+
+                        <p>
+                            Your voting activity will appear here.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="activity-empty">
+
+                    🗳️
+
+                    <p>
+                        No recent activity.
+                        Go to <strong>Vote Now</strong>
+                        to participate in the election.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    // Get logged-in user
+    const userData = localStorage.getItem("user");
+
+
+    // If user is not logged in
+    if (!userData) {
+
+        window.location.href = "index.html";
+
+    } else {
+
+        const user = JSON.parse(userData);
+
+        document.getElementById("welcomeMessage").innerText =
+            "Welcome, " + user.name + "!";
+
+        document.getElementById("headerUserName").innerText =
+            "Welcome, " + user.name + "!";
+
+        document.getElementById("profileName").innerText =
+            user.name;
+
+        document.getElementById("profileEmail").innerText =
+            user.email;
+
+        document.getElementById("profileRole").innerText =
+            user.role;
+
+    }
+
+
+    // Show profile
+    function showProfile() {
+
+        const profileBox =
+            document.getElementById("profileBox");
+
+        if (profileBox.style.display === "none") {
+
+            profileBox.style.display = "block";
+
+            profileBox.scrollIntoView({
+                behavior: "smooth"
+            });
+
+        } else {
+
+            profileBox.style.display = "none";
+
+        }
+
+    }
+
+
+    // Logout
+    function logout() {
+
+        localStorage.removeItem("user");
+
+        window.location.href = "index.html";
+
+    }
+
+</script>
+
+</body>
+
+</html>

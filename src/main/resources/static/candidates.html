@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cast Your Vote</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <div class="vote-logo">🗳️</div>
+            <h2>E-Voting</h2>
+            <p>Secure Digital Election</p>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="voter-dashboard.html" class="menu-item">
+                🏠
+                <span>Dashboard</span>
+            </a>
+
+            <a href="candidates.html" class="menu-item active">
+                🗳️
+                <span>Vote Now</span>
+            </a>
+
+            <a href="voter-dashboard.html" class="menu-item">
+                👤
+                <span>My Profile</span>
+            </a>
+
+            <a href="results.html" class="menu-item">
+                📊
+                <span>Results</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <main class="main-content">
+
+        <header class="top-header">
+
+            <div class="header-title">
+
+                <div class="header-vote-icon">
+                    🗳️
+                </div>
+
+                <div>
+                    <h1>Cast Your Vote</h1>
+                    <p>Select your preferred candidate</p>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section class="dashboard-content">
+
+            <div class="welcome-banner">
+
+                <div class="welcome-text">
+
+                    <h2>🗳️ Make Your Vote Count</h2>
+
+                    <h3>
+                        Choose your candidate carefully.
+                    </h3>
+
+                    <p>
+                        Select one candidate from the list below
+                        and confirm your vote.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-cards" id="candidateList">
+
+                <p>Loading candidates...</p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- SUCCESS POPUP -->
+
+<div id="successModal" class="success-modal">
+
+    <div class="success-box">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <h2>Vote Submitted Successfully!</h2>
+
+        <p>
+            Your vote has been recorded successfully.
+            Thank you for participating in the election.
+        </p>
+
+        <button onclick="closeSuccessModal()">
+            OK
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const userData = localStorage.getItem("user");
+
+    if (!userData) {
+
+        window.location.href = "index.html";
+
+    }
+
+
+    async function loadCandidates() {
+
+        const candidateList =
+            document.getElementById("candidateList");
+
+        try {
+
+            const response =
+                await fetch("/api/candidates");
+
+            if (!response.ok) {
+
+                throw new Error("Unable to load candidates");
+
+            }
+
+            const candidates =
+                await response.json();
+
+            candidateList.innerHTML = "";
+
+
+            if (candidates.length === 0) {
+
+                candidateList.innerHTML =
+                    "<p>No candidates available.</p>";
+
+                return;
+
+            }
+
+
+            candidates.forEach(candidate => {
+
+                const card =
+                    document.createElement("div");
+
+                card.className =
+                    "dashboard-card vote-card";
+
+
+                card.innerHTML = `
+
+                    <div class="card-icon">
+                        🗳️
+                    </div>
+
+                    <h3>
+                        ${candidate.name}
+                    </h3>
+
+                    <p>
+                        <strong>Party:</strong>
+                        ${candidate.party}
+                    </p>
+
+                    <button onclick="castVote(${candidate.id})">
+                        Vote →
+                    </button>
+
+                `;
+
+
+                candidateList.appendChild(card);
+
+            });
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            candidateList.innerHTML =
+                "<p>Unable to load candidates.</p>";
+
+        }
+
+    }
+
+
+    async function castVote(candidateId) {
+
+        const user =
+            JSON.parse(localStorage.getItem("user"));
+
+
+        const confirmation =
+            confirm(
+                "Are you sure you want to vote for this candidate?"
+            );
+
+
+        if (!confirmation) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch("/api/votes", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        voterId: user.id,
+
+                        candidateId: candidateId
+
+                    })
+
+                });
+
+
+            const result =
+                await response.text();
+
+
+            if (response.ok) {
+
+                document.getElementById("successModal")
+                    .classList.add("show");
+
+            } else {
+
+                alert(result);
+
+            }
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("Unable to connect to server.");
+
+        }
+
+    }
+
+
+    function closeSuccessModal() {
+
+        document.getElementById("successModal")
+            .classList.remove("show");
+
+        window.location.href =
+            "voter-dashboard.html";
+
+    }
+
+
+    loadCandidates();
+
+</script>
+
+</body>
+
+</html>
